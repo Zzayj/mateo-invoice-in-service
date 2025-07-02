@@ -1,0 +1,43 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - dev # Указываем ветку, по которой будем деплоить
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend to Server
+    runs-on: ubuntu-latest # Запуск на стандартном облачном раннере
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: dev # Указываем нужную ветку
+          path: front # Путь, где будет фронтенд
+
+      - name: Set up SSH for Deployment
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa  # Загружаем приватный ключ
+          chmod 600 ~/.ssh/id_rsa  # Делаем ключ приватным
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts  # Добавляем сервер в known_hosts
+
+      - name: Deploy Frontend via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+             cd /home/deploy || exit 1
+
+             if [ ! -d "platezhka_front" ]; then
+              git clone --branch dev https://zzayj:${{ secrets.GH_TOKEN }}@github.com/Zzayj/platezhka_front.git
+             fi
+
+             cd platezhka_front
+             git fetch --all
+             git reset --hard origin/dev
+
+             docker-compose build --no-cache
+             docker-compose down
+             docker-compose up -d
+          EOF
