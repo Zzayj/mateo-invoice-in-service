@@ -22,7 +22,6 @@ WORKDIR /app
 
 # Copy the binary from builder
 COPY --from=builder /app/mateo .
-COPY --from=builder /app/.env .
 
 # Expose the port the app runs on
 EXPOSE 8080
