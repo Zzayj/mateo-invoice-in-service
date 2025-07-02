@@ -1,11 +1,12 @@
 package http
 
 import (
+	"mateo/internal/domain"
+	"time"
+
 	"github.com/gofiber/fiber/v3"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
-	"mateo/internal/domain"
-	"time"
 )
 
 const (
@@ -72,6 +73,7 @@ type CreateInvoiceResponseData struct {
 	CardName          string    `json:"cardName"`
 	Issuer            string    `json:"issuer"`
 	TimeExperies      time.Time `json:"timeExperies"`
+	Exchange          string    `json:"exchange"`
 }
 
 func (s *Server) CreateInvoice(fiberContext fiber.Ctx) error {
@@ -132,6 +134,7 @@ func buildCreateInvoiceResponseWithInvoice(invoice *domain.Invoice, requisite *d
 			CardName:          requisite.RecipientName,
 			Issuer:            requisite.BankName,
 			TimeExperies:      invoice.TimeExpires,
+			Exchange:          invoice.Exchange.String(),
 		},
 	}
 }
