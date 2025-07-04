@@ -58,7 +58,7 @@ type CreateInvoiceResponse struct {
 }
 
 type CreateInvoiceResponseData struct {
-	InvoiceId         string    `json:"invoiceId"`
+	InvoiceId         string    `json:"id"`
 	InvoiceStatus     string    `json:"invoiceStatus"`
 	Amount            string    `json:"amount"`
 	IsFlexibleAmount  bool      `json:"isFlexibleAmount"`
